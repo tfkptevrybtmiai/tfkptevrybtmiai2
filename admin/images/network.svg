@@ -1,0 +1,21 @@
+<svg id="Network" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.12 22.12">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #2e2e2e;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <circle id="Ellipse_15" data-name="Ellipse 15" class="cls-1" cx="10.31" cy="10.31" r="10.31" transform="translate(0.75 0.75)"/>
+  <g id="Group_6" data-name="Group 6">
+    <path id="Path_6" data-name="Path 6" class="cls-1" d="M10.9,21.09c-2.3-1.07-4.01-5.16-4.01-10.03,0-4.98,1.79-9.14,4.16-10.1"/>
+    <path id="Path_7" data-name="Path 7" class="cls-1" d="M11.21.96c2.3,1.07,4.01,5.16,4.01,10.03,0,4.98-1.79,9.14-4.16,10.1"/>
+  </g>
+  <g id="Group_7" data-name="Group 7">
+    <line id="Line_2" data-name="Line 2" class="cls-1" x2="19.03" transform="translate(1.54 7.89)"/>
+    <line id="Line_3" data-name="Line 3" class="cls-1" x2="19.82" transform="translate(0.75 14.23)"/>
+  </g>
+</svg>

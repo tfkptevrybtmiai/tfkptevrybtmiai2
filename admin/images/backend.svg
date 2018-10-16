@@ -1,0 +1,31 @@
+<svg id="Qboard_Backend" data-name="Qboard Backend" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21.487 18.11">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #2e2e2e;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #2e2e2e;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <g id="Group_9" data-name="Group 9">
+    <path id="Path_8" data-name="Path 8" class="cls-1" d="M19.873,1.613V16.5H1.613V1.613h18.26M21.487,0H0V18.11H21.487V0Z"/>
+  </g>
+  <g id="Group_10" data-name="Group 10" transform="translate(3.56 2.882)">
+    <path id="Path_9" data-name="Path 9" class="cls-1" d="M4.654,2.68A1.344,1.344,0,1,0,6,4.024,1.345,1.345,0,0,0,4.654,2.68Z" transform="translate(-3.31 -2.68)"/>
+  </g>
+  <g id="Group_11" data-name="Group 11" transform="translate(7.592 2.882)">
+    <path id="Path_10" data-name="Path 10" class="cls-1" d="M8.4,2.68A1.344,1.344,0,1,0,9.749,4.024,1.345,1.345,0,0,0,8.4,2.68Z" transform="translate(-7.06 -2.68)"/>
+  </g>
+  <g id="Group_12" data-name="Group 12" transform="translate(11.625 2.882)">
+    <path id="Path_11" data-name="Path 11" class="cls-1" d="M12.154,2.68A1.344,1.344,0,1,0,13.5,4.024,1.345,1.345,0,0,0,12.154,2.68Z" transform="translate(-10.81 -2.68)"/>
+  </g>
+  <g id="Group_13" data-name="Group 13" transform="translate(1 7.668)">
+    <line id="Line_4" data-name="Line 4" class="cls-2" x2="19.465"/>
+  </g>
+</svg>

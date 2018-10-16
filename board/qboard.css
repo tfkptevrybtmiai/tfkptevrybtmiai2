@@ -1,0 +1,28 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+#main {
+    background: black;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+@font-face {
+    font-family: callnumber;
+    src: url(fonts/MyriadPro-Bold.otf);
+}
+
+@font-face {
+    font-family: timerfont;
+    src: url(fonts/Montserrat-Medium.ttf);
+}

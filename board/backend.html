@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        .container {
+            background: #fbd241;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0
+        }
+        .container div {
+            text-align: center;
+        }
+        .align-center-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            max-width: 400px;
+            margin-bottom: 70px;
+        }
+        .qrcode img {
+            box-shadow: 2px 2px 5px #000;
+            margin-bottom: 50px;
+        }
+        .backend {
+            font-size: 1.5rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container align-center-center">
+        <div>
+            <div class="title">播放器未指定播放內容，請掃瞄 QR-code 進行內容指派</div>
+            <div class="qrcode"><img src="backend.png" /></div>
+            <div id="url" class="backend"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("url").innerHTML = parent.backend_url;
+    </script>
+</body>
+</html>
