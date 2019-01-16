@@ -5,7 +5,7 @@
 
     "use strict";
 
-    var calling, counter_num, current, dispatch, elements, href, init, initCalling, keyMap, load, next, playCalling, playHtml, playIframe, playImage, playMarquee, playVideo, pressed, register, resetContent, resetImage, resetMarquee, resetVideo, showImage, socket;
+    var calling, counter_num, current, dispatch, elements, href, init, initCalling, keyMap, load, next, parseSize, playCalling, playHtml, playIframe, playImage, playMarquee, playVideo, p192, pressed, register, resetContent, resetImage, resetMarquee, resetVideo, showBlock, showImage, socket;
 
     //-------------------------------------------------------------------------
 
@@ -35,6 +35,8 @@
         "104": "8",
         "105": "9"
     };
+
+    p192 = {time: 0};
 
     //-------------------------------------------------------------------------
 
@@ -68,7 +70,29 @@
 
     initCalling = function (element, data) {
         if (data.length) {
-            element.node.data("content", data[0]);
+            var item = data[0];
+
+            $("#call-number").css({
+                color: item.color || "",
+                fontSize: parseSize(item.size)
+            });
+
+            element.node.find(".call-text").text(item.display_title).css({
+                color: item.title_color || "",
+                fontSize: parseSize(item.title_size)
+            });
+
+            element.node.css("background-color", item.bg_color || "");
+
+            if (item.bg_image) {
+                socket.emit("PATH", {
+                    category: "background",
+                    type: element.type,
+                    id: item.bg_image
+                });
+            }
+
+            element.node.data("content", item);
         }
     };
 
@@ -95,6 +119,12 @@
             var tag;
 
             switch (data.category) {
+            case "background":
+                if (data.url) {
+                    elements[data.type].node.css("background-image", "url(" + data.url + ")");
+                }
+                return;
+
             case "image":
                 if (data.file) {
                     showImage(data);
@@ -164,6 +194,22 @@
         if (element) {
             element.play(element);
         }
+    };
+
+    //-------------------------------------------------------------------------
+
+    parseSize = function (size, defaultSize) {
+        if (size) {
+            if (size > 100) {
+                size = 100;
+            } else if (size < 1) {
+                size = 1;
+            }
+
+            return size + "%";
+        }
+
+        return defaultSize || "";
     };
 
     //-------------------------------------------------------------------------
@@ -287,6 +333,23 @@
     playImage = function (element, data) {
         if (data) {
             element.data = data;
+
+            if (data.length) {
+                var item = data[0];
+
+                element.node.css("background-color", item.bg_color || "");
+
+                if (item.bg_image) {
+                    socket.emit("PATH", {
+                        category: "background",
+                        type: element.type,
+                        id: item.bg_image
+                    });
+                }
+            } else {
+                element.node.css("background-color", "");
+                element.node.css("background-image", "");
+            }
         } else {
             data = element.data;
         }
@@ -332,6 +395,31 @@
 
         if (data) {
             element.data = data;
+
+            if (data.length) {
+                var item = data.shift();
+
+                element.node.css("color", item.color || "");
+                element.node.css("background-color", item.bg_color || "");
+
+                if (item.bg_image) {
+                    socket.emit("PATH", {
+                        category: "background",
+                        type: element.type,
+                        id: item.bg_image
+                    });
+                }
+
+                while (data.length) {
+                    item.marquee += "　　　　　　　" + data.shift().marquee;
+                }
+
+                data.unshift(item);
+            } else {
+                element.node.css("color", "");
+                element.node.css("background-color", "");
+                element.node.css("background-image", "");
+            }
         } else {
             data = element.data;
         }
@@ -341,15 +429,10 @@
 
             data.push(target);
 
-            element.current = $("<div class=\"marquee\" style=\"height:100%;\">" + target.marquee + "</div>").appendTo(element.node).marquee({
+            element.current = $("<div class=\"marquee\" style=\"font-size:" + parseSize(target.size, "70%") + ";height:100%;\">" + target.marquee + "</div>").appendTo(element.node).marquee({
                 duration: (target.duration || element.node.data("duration") || 12) * 1000
             }).on("finished", function () {
                 playMarquee(element);
-            });
-
-            element.node.css({
-                background: target.background || "",
-                color: target.color || ""
             });
         }
     };
@@ -361,6 +444,23 @@
 
         if (data) {
             element.data = data;
+
+            if (data.length) {
+                var item = data[0];
+
+                element.node.css("background-color", item.bg_color || "");
+
+                if (item.bg_image) {
+                    socket.emit("PATH", {
+                        category: "background",
+                        type: element.type,
+                        id: item.bg_image
+                    });
+                }
+            } else {
+                element.node.css("background-color", "");
+                element.node.css("background-image", "");
+            }
         } else {
             data = element.data;
         }
@@ -406,6 +506,8 @@
         var node = $("#" + type);
 
         if (node.length) {
+            node.css("font-size", Math.floor(Math.min(node.height(), node.width())) + "px");
+
             elements[type] = {
                 node: node,
                 play: play,
@@ -453,11 +555,6 @@
         if (element.current) {
             element.current.marquee("destroy").remove();
             element.current = null;
-
-            element.node.css({
-                background: "",
-                color: ""
-            });
         }
     };
 
@@ -469,13 +566,51 @@
 
     //-------------------------------------------------------------------------
 
+    showBlock = function () {
+        if ($(".size-block").length) {
+            return;
+        }
+
+        $.each(elements, function (ignore, element) {
+            var height, offset, size, width;
+
+            offset = element.node.offset();
+            height = Math.floor(element.node.height());
+            width = Math.floor(element.node.width());
+
+            if (height > width) {
+                size = width;
+            } else {
+                size = height;
+            }
+
+            if (size > 150) {
+                size = 150;
+            }
+
+            $("body").append($("<div class=\"size-block\"><span>" + width + " * " + height + "</span></div>").css({
+                fontSize: size,
+                height: height,
+                left: offset.left,
+                top: offset.top,
+                width: width
+            }));
+        });
+
+        setTimeout(function () {
+            $(".size-block").remove();
+        }, 10000);
+    };
+
+    //-------------------------------------------------------------------------
+
     showImage = function (data) {
         var element, image;
 
         element = elements[data.type];
 
         if (element) {
-            image = $("<img src=\"" + data.url + "\" height=\"" + data.height + "\" width=\"" + data.width + "\" style=\"position:absolute; left:" + data.left + "px; top:" + data.top + "px; display: none;\">");
+            image = $("<img src=\"" + data.url + "\" height=\"" + data.height + "\" width=\"" + data.width + "\" style=\"display:none;\">");
             image.appendTo(element.node);
 
             element.reset(element, function () {
@@ -505,6 +640,7 @@
     register("image2", playImage, resetImage);
     register("image3", playImage, resetImage);
     register("marquee", playMarquee, resetMarquee);
+    register("rss", playMarquee, resetMarquee);
     register("video", playVideo, resetVideo);
 
     //-------------------------------------------------------------------------
@@ -526,6 +662,19 @@
             }
         } else if (event.which === 27) {
             socket.emit("STOP_CALLING");
+        } else if (event.which === 192) {
+            if (Date.now() > p192.time + 3000) {
+                p192.count = 1;
+                p192.time = Date.now();
+            } else {
+                p192.count += 1;
+
+                if (p192.count === 5) {
+                    p192.count = Number.MIN_SAFE_INTEGER;
+
+                    showBlock();
+                }
+            }
         }
     }).keyup(function (event) {
         var value;
