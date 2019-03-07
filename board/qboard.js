@@ -90,6 +90,8 @@
                     type: element.type,
                     id: item.bg_image
                 });
+            } else {
+                element.node.css("background-image", "");
             }
 
             element.node.data("content", item);
@@ -345,6 +347,8 @@
                         type: element.type,
                         id: item.bg_image
                     });
+                } else {
+                    element.node.css("background-image", "");
                 }
             } else {
                 element.node.css("background-color", "");
@@ -408,6 +412,8 @@
                         type: element.type,
                         id: item.bg_image
                     });
+                } else {
+                    element.node.css("background-image", "");
                 }
 
                 while (data.length) {
@@ -456,6 +462,8 @@
                         type: element.type,
                         id: item.bg_image
                     });
+                } else {
+                    element.node.css("background-image", "");
                 }
             } else {
                 element.node.css("background-color", "");

@@ -239,40 +239,42 @@
             url = path(id, filesite);
         }
 
-        if (task) {
-            if (!download[id]) {
+        if (!fs.existsSync(destination)) {
+            if (task) {
+                if (!download[id]) {
+                    download[id] = true;
+
+                    queue.push({
+                        category: category,
+                        id: id,
+                        destination: destination
+                    });
+                }
+            } else {
                 download[id] = true;
+                file = tmp + id;
+                task = fs.createWriteStream(file);
 
-                queue.push({
-                    category: category,
-                    id: id,
-                    destination: destination
+                task.on("close", function () {
+                    var next = queue.shift();
+
+                    delete download[id];
+
+                    task = null;
+
+                    if (status === 200) {
+                        fs.renameSync(file, destination);
+                    }
+
+                    if (next) {
+                        download(next.category, next.id, next.destination);
+                    }
                 });
+
+                request(url).on("response", function (response) {
+                    status = response.statusCode;
+                }).pipe(task);
             }
-        } else {
-            download[id] = true;
-            file = tmp + id;
-            task = fs.createWriteStream(file);
-
-            task.on("close", function () {
-                var next = queue.shift();
-
-                delete download[id];
-
-                task = null;
-
-                if (status === 200) {
-                    fs.renameSync(file, destination);
-                }
-
-                if (next) {
-                    download(next.category, next.id, next.destination);
-                }
-            });
-
-            request(url).on("response", function (response) {
-                status = response.statusCode;
-            }).pipe(task);
         }
 
         return url;
