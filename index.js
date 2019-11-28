@@ -1,39 +1,57 @@
-/*jslint long, multivar, node*/
+/*jslint long, node*/
 
 (function () {
 
     "use strict";
 
-    var active, app, backend, browser, calling, check, command, config, connect, current, dispatch, download, express, filesite, fs, home, http, init, io, macaddress, network, omx, path, playing, qrcode, queue, request, save, server, snapshot, socket, stop, stopCalling, subprocess, task, template, tmp, trigger, website;
-
-    connect = require("socket.io-client");
-    express = require("express");
-    fs = require("fs");
-    http = require("http");
-    macaddress = require("macaddress");
-    network = require("network");
-    omx = require("omxplayer-controll");
-    qrcode = require("qrcode");
-    request = require("request");
-    socket = require("socket.io");
-    subprocess = require("child_process");
-
-    //-------------------------------------------------------------------------
-
-    command = "/home/pi/tmp/command.sh";
-    config = "/home/pi/tmp/config";
-    filesite = false;
-    home = "/home/pi/client/board/";
-    snapshot = "/home/pi/tmp/snapshot.png";
-    tmp = "/tmp/";
-    trigger = "/home/pi/tmp/trigger";
+    var active;
+    var backend;
+    var browser;
+    var calling;
+    var check;
+    var current;
+    var dispatch;
+    var download;
+    var init;
+    var path;
+    var playing;
+    var save;
+    var stop;
+    var stopCalling;
+    var task;
+    var template;
+    var website;
 
     //-------------------------------------------------------------------------
 
-    app = express();
-    queue = [];
-    server = http.createServer(app);
-    io = socket(server);
+    var connect = require("socket.io-client");
+    var express = require("express");
+    var fs = require("fs");
+    var http = require("http");
+    var macaddress = require("macaddress");
+    var network = require("network");
+    var omx = require("omxplayer-controll");
+    var qrcode = require("qrcode");
+    var request = require("request");
+    var socket = require("socket.io");
+    var subprocess = require("child_process");
+
+    //-------------------------------------------------------------------------
+
+    var command = "/home/pi/tmp/command.sh";
+    var config = "/home/pi/tmp/config";
+    var filesite = false;
+    var home = "/home/pi/client/board/";
+    var snapshot = "/home/pi/tmp/snapshot.png";
+    var tmp = "/tmp/";
+    var trigger = "/home/pi/tmp/trigger";
+
+    //-------------------------------------------------------------------------
+
+    var app = express();
+    var queue = [];
+    var server = http.createServer(app);
+    var io = socket(server);
 
     //-------------------------------------------------------------------------
 
@@ -47,10 +65,10 @@
         }
 
         backend = connect("http://" + settings.domain + ":" + settings.port + "/?network=" + Buffer.from(JSON.stringify({
-            address: data.ip_address,
-            gateway: data.gateway_ip,
-            netmask: data.netmask,
-            token: token
+            "address": data.ip_address,
+            "gateway": data.gateway_ip,
+            "netmask": data.netmask,
+            "token": token
         })).toString("base64"));
 
         backend.on("CALLING", function (info) {
@@ -62,9 +80,9 @@
         backend.on("COMMAND", function (command) {
             subprocess.exec(command, function (error, stdout, stderr) {
                 backend.emit("COMMAND", {
-                    error: error,
-                    stdout: stdout,
-                    stderr: stderr
+                    "error": error,
+                    "stdout": stdout,
+                    "stderr": stderr
                 });
             });
         });
@@ -122,7 +140,11 @@
     //-------------------------------------------------------------------------
 
     dispatch = function (bundle) {
-        var background, content, digest, disabled, program;
+        var background;
+        var content;
+        var digest;
+        var disabled;
+        var program;
 
         if (bundle) {
             current = bundle;
@@ -147,7 +169,7 @@
                 program = program.pop();
             } else {
                 program = {
-                    template: {}
+                    "template": {}
                 };
             }
 
@@ -196,11 +218,11 @@
                 }
 
                 save("content.json", JSON.stringify({
-                    date: current.date,
-                    time: current.time,
-                    href: website,
-                    counter_num: current.data && current.data[0].counter_num,
-                    content: content
+                    "date": current.date,
+                    "time": current.time,
+                    "href": website,
+                    "counter_num": current.data && current.data[0].counter_num,
+                    "content": content
                 }));
 
                 browser.emit("CONTENT");
@@ -229,7 +251,9 @@
     //-------------------------------------------------------------------------
 
     download = function (category, id, destination) {
-        var file, status, url;
+        var file;
+        var status;
+        var url;
 
         if (category === "image") {
             url = website + "backend/index.php?p_action_name=get-file&width=1280&height=720&id=" + id;
@@ -245,9 +269,9 @@
                     download[id] = true;
 
                     queue.push({
-                        category: category,
-                        id: id,
-                        destination: destination
+                        "category": category,
+                        "id": id,
+                        "destination": destination
                     });
                 }
             } else {
@@ -344,7 +368,7 @@
 
     app.get("/calling", function (request, response) {
         if (browser) {
-            browser.emit("CALLING", {calling_num: request.query.num});
+            browser.emit("CALLING", {"calling_num": request.query.num});
         }
 
         response.send("");
@@ -377,8 +401,8 @@
     app.get("/snapshot-done", function (request, response) {
         if (backend && fs.existsSync(snapshot)) {
             backend.emit("SNAPSHOT", {
-                name: request.query.token,
-                content: fs.readFileSync(snapshot).toString("base64")
+                "name": request.query.token,
+                "content": fs.readFileSync(snapshot).toString("base64")
             });
         }
 
@@ -443,8 +467,8 @@
                 playing = true;
 
                 omx.open(file, {
-                    blackBackground: false,
-                    otherArgs: ["--win", data.left + "," + data.top + "," + data.right + "," + data.bottom]
+                    "blackBackground": false,
+                    "otherArgs": ["--win", data.left + "," + data.top + "," + data.right + "," + data.bottom]
                 });
 
                 setTimeout(function () {
