@@ -9,9 +9,12 @@
     var browser;
     var calling;
     var check;
+    var cleanEInk;
     var current;
     var dispatch;
     var download;
+    var drawEInk;
+    var drawing;
     var init;
     var path;
     var playing;
@@ -87,6 +90,22 @@
             });
         });
 
+        backend.on("E-INK", function (info) {
+            if (info.image) {
+                var file = home + "files/" + info.image;
+
+                if (fs.existsSync(file)) {
+                    drawEInk(info.type, file);
+                } else {
+                    download("e-ink", info.image, file, function () {
+                        drawEInk(info.type, file);
+                    });
+                }
+            } else {
+                cleanEInk(info.type);
+            }
+        });
+
         backend.on("HOST", function (host) {
             var cfg = JSON.parse(fs.readFileSync(config, "UTF-8"));
 
@@ -135,6 +154,14 @@
                 }
             }
         });
+    };
+
+    //-------------------------------------------------------------------------
+
+    cleanEInk = function (type) {
+        if (drawing) {
+            return;
+        }
     };
 
     //-------------------------------------------------------------------------
@@ -250,7 +277,7 @@
 
     //-------------------------------------------------------------------------
 
-    download = function (category, id, destination) {
+    download = function (category, id, destination, callback) {
         var file;
         var status;
         var url;
@@ -288,6 +315,10 @@
 
                     if (status === 200) {
                         fs.renameSync(file, destination);
+
+                        if (callback) {
+                            callback();
+                        }
                     }
 
                     if (next) {
@@ -302,6 +333,20 @@
         }
 
         return url;
+    };
+
+    //-------------------------------------------------------------------------
+
+    drawEInk = function (type, image) {
+        if (drawing) {
+            return;
+        }
+
+        drawing = subprocess.spawn("/usr/bin/python", ["/home/pi/client/e-ink/draw" + type + ".py", image]);
+
+        drawing.on("close", function () {
+            drawing = null;
+        });
     };
 
     //-------------------------------------------------------------------------
